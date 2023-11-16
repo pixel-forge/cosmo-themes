@@ -4,11 +4,24 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "typescript": "tsc",
+    "clean": "bash scripts/clean-dist.sh",
+    "transfer-files": "bash scripts/file-transfer.sh",
+    "build": "npm run clean && npm run typescript && npm run transfer-files",
+    "deploy": "npm publish --access public"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pixel-forge/cosmo-themes.git"
+  },
+  "author": "Cipher_IL",
+  "license": "Apache-2.0",
+  "keywords": [
+    "React",
+    "SVG",
+    "Icons",
+    "SASS"
+  ],
   "devDependencies": {
     "@pixel-forge/cosmo-utils": "^1.0.0"
   }
