@@ -1,0 +1,13 @@
+## Directories ##
+
+node_modules
+src
+scripts
+.idea
+
+## Specific Files ##
+
+.gitignore
+.npmignore
+tsconfig.json
+svgr.config.js

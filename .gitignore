@@ -1,0 +1,11 @@
+## Specific Files ##
+
+package-lock.json
+
+## Directories ##
+
+/node_modules
+/dist
+.DS_Store
+/src/icon-components
+.idea
