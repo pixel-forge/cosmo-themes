@@ -1,4 +1,4 @@
-import {_keys, Cosmo_LogLevel, CosmoModule} from '@pixel-forge/cosmo-utils';
+import {_keys, Cosmo_LogLevel, Cosmo_WebStorage, CosmoModule} from '@pixel-forge/cosmo-utils';
 
 type Theme = { [k: string]: string };
 
@@ -10,6 +10,7 @@ class CosmoModule_Theme_Class
 	private readonly styleSheet: HTMLStyleElement;
 	private readonly themes: { [k: string]: Theme } = {};
 	private themeKey: string | undefined;
+	private readonly webStorage = new Cosmo_WebStorage<string>('cosmo-theme');
 
 	constructor() {
 		super();
@@ -68,33 +69,54 @@ class CosmoModule_Theme_Class
 
 	// ################## Class Methods - Theme Application ##################
 
-	public applyTheme = (key: string) => {
-		const theme = this.themes[key];
-		if (!theme) {
-			this.logErrorBold(`No theme registered for key ${key}`);
+	public applyTheme = (_key: string, takeFromStorage: boolean = false) => {
+		const keyFromStorage = this.webStorage.get();
+		const _theme = this.themes[_key];
+		const _storageTheme = this.themes[keyFromStorage];
+		let theme: Theme;
+		let key: string;
+
+		if (!_theme) {
+			this.logErrorBold(`No theme registered for key ${_key}`);
 			return;
+		}
+
+		//Taking theme from storage
+		if (takeFromStorage) {
+			if (_storageTheme) {
+				theme = _storageTheme;
+				key = keyFromStorage;
+			} else { //Theme from storage not registered
+				this.logErrorBold(`No theme registered for key taken from storage ${keyFromStorage}`);
+				theme = _theme;
+				key = _key;
+			}
+		} else { //Not taking theme from storage
+			theme = _theme;
+			key = _key;
 		}
 
 		this.logVerbose(`Setting theme ${key}`);
 		this.styleSheet.innerHTML = this.getThemeString(key, theme);
 		this.themeKey = key;
+		this.webStorage.set(key);
 	};
 
 	private getThemeString = (key: string, theme: Theme): string => {
 		let themeString: string = `/* CosmoTheme generated theme ${key} */\n`;
 		themeString += ':root {\n';
-		_keys(theme).forEach(key=>{
-			themeString += `${key}: ${theme[key]};\n`
-		})
+		_keys(theme).forEach(key => {
+			themeString += `${key}: ${theme[key]};\n`;
+		});
 		themeString += '}\n';
 		return themeString;
 	};
 
 	public getThemeKey = () => {
-		if(!this.themeKey)
+		if (!this.themeKey)
 			this.logWarning('Trying to get theme key but no theme was set.\nDid you forget to call applyTheme?');
 		return this.themeKey;
-	}
+	};
 }
 
 export const CosmoModule_Theme = new CosmoModule_Theme_Class();
