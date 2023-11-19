@@ -7,8 +7,9 @@ export const cosmoKey_Themes_Default = 'default';
 class CosmoModule_Theme_Class
 	extends CosmoModule {
 
-	readonly themes: { [k: string]: Theme } = {};
-	readonly styleSheet: HTMLStyleElement;
+	private readonly styleSheet: HTMLStyleElement;
+	private readonly themes: { [k: string]: Theme } = {};
+	private themeKey: string | undefined;
 
 	constructor() {
 		super();
@@ -76,15 +77,24 @@ class CosmoModule_Theme_Class
 
 		this.logVerbose(`Setting theme ${key}`);
 		this.styleSheet.innerHTML = this.getThemeString(key, theme);
+		this.themeKey = key;
 	};
 
 	private getThemeString = (key: string, theme: Theme): string => {
-		let themeString: string = `/* CosmoTheme generated theme ${key} */`;
+		let themeString: string = `/* CosmoTheme generated theme ${key} */\n`;
+		themeString += ':root {\n';
 		_keys(theme).forEach(key=>{
-			themeString += `${key}: ${theme[key]};`
+			themeString += `${key}: ${theme[key]};\n`
 		})
+		themeString += '}\n';
 		return themeString;
 	};
+
+	public getThemeKey = () => {
+		if(!this.themeKey)
+			this.logWarning('Trying to get theme key but no theme was set.\nDid you forget to call applyTheme?');
+		return this.themeKey;
+	}
 }
 
 export const CosmoModule_Theme = new CosmoModule_Theme_Class();
