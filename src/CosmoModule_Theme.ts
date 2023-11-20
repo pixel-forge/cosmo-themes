@@ -71,6 +71,7 @@ class CosmoModule_Theme_Class
 
 	public applyTheme = (key: string) => {
 		const theme = this.themes[key];
+		const defaultTheme = this.themes[cosmoKey_Themes_Default] ?? {};
 
 		if (!theme) {
 			this.logErrorBold(`No theme registered for key ${key}`);
@@ -78,7 +79,8 @@ class CosmoModule_Theme_Class
 		}
 
 		this.logVerbose(`Setting theme ${key}`);
-		this.styleSheet.innerHTML = this.getThemeString(key, theme);
+		const _theme = {...defaultTheme,...theme};
+		this.styleSheet.innerHTML = this.getThemeString(key, _theme);
 		this.themeKey = key;
 		this.webStorage.set(key);
 	};
