@@ -105,7 +105,7 @@ class CosmoModule_Theme_Class
 
 		const defaultTheme = this.themes[cosmoKey_Themes_Default] ?? {};
 		const _theme = {...defaultTheme, ...storageTheme};
-		this.logVerbose(`Setting theme ${keyFromStorage}`);
+		this.logWarning(`Setting theme ${keyFromStorage}`);
 		this.styleSheet.innerHTML = this.getThemeString(keyFromStorage, _theme);
 		this.themeKey = keyFromStorage;
 		this.webStorage.set(keyFromStorage);
