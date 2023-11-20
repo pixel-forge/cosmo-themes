@@ -45,7 +45,6 @@ class CosmoModule_Theme_Class
 		try {
 			this.validateTheme(cosmoKey_Themes_Default, theme);
 			this.themes[cosmoKey_Themes_Default] = theme;
-			this.applyTheme(cosmoKey_Themes_Default);
 			return this;
 		} catch (e) {
 			throw e;
@@ -105,7 +104,7 @@ class CosmoModule_Theme_Class
 
 		const defaultTheme = this.themes[cosmoKey_Themes_Default] ?? {};
 		const _theme = {...defaultTheme, ...storageTheme};
-		this.logWarning(`Setting theme ${keyFromStorage}`);
+		this.logVerbose(`Setting theme ${keyFromStorage}`);
 		this.styleSheet.innerHTML = this.getThemeString(keyFromStorage, _theme);
 		this.themeKey = keyFromStorage;
 		this.webStorage.set(keyFromStorage);
