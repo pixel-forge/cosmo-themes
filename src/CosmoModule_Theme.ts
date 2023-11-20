@@ -24,6 +24,11 @@ class CosmoModule_Theme_Class
 
 	// ################## Class Methods - Theme Registration ##################
 
+	/**
+	 * Saves a theme to the modules cache so that in runtime switching themes needs just the theme key.
+	 * @param key
+	 * @param theme
+	 */
 	public registerTheme = (key: string, theme: Theme): this => {
 		//Warn if overwriting existing theme
 		if (this.themes[key])
@@ -38,6 +43,12 @@ class CosmoModule_Theme_Class
 		}
 	};
 
+	/**
+	 * Saves a theme under the 'default' key.<br/>The properties of the default theme are added to any later generated theme.
+	 * <br/>In case a theme that is applied in runtime shares properties that also appear in the default theme, the default theme will
+	 * always be overwritten.
+	 * @param theme
+	 */
 	public registerDefaultTheme = (theme: Theme) => {
 		if (this.themes[cosmoKey_Themes_Default])
 			this.logWarning(`Overwriting default theme`);
@@ -51,6 +62,11 @@ class CosmoModule_Theme_Class
 		}
 	};
 
+	/**
+	 * Validates that all the properties in the theme start with "--" to adhere to css conventions
+	 * @param key
+	 * @param theme
+	 */
 	private validateTheme = (key: string, theme: Theme) => {
 		const keys = _keys(theme) as string[];
 		const invalidKeys: string[] = [];
@@ -68,6 +84,10 @@ class CosmoModule_Theme_Class
 
 	// ################## Class Methods - Theme Application ##################
 
+	/**
+	 * Given a theme key, applies a theme, so long as the theme was registered in the module beforehand.
+	 * @param key
+	 */
 	public applyTheme = (key: string) => {
 		const theme = this.themes[key];
 		const defaultTheme = this.themes[cosmoKey_Themes_Default] ?? {};
@@ -84,6 +104,11 @@ class CosmoModule_Theme_Class
 		this.webStorage.set(key);
 	};
 
+	/**
+	 * Attempts to set the theme of the key that was last saved in the local storage.<br/>
+	 * If there was no key in the storage, will attempt to set the theme of the given fallback key.
+	 * @param fallbackKey
+	 */
 	public applyThemeFromStorage = (fallbackKey?: string) => {
 		const keyFromStorage = this.webStorage.get();
 		const storageTheme = this.themes[keyFromStorage];
@@ -110,6 +135,11 @@ class CosmoModule_Theme_Class
 		this.webStorage.set(keyFromStorage);
 	};
 
+	/**
+	 * Generates a theme string to insert into the HTML tag.
+	 * @param key
+	 * @param theme
+	 */
 	private getThemeString = (key: string, theme: Theme): string => {
 		let themeString: string = `/* CosmoTheme generated theme ${key} */\n`;
 		themeString += ':root {\n';
@@ -120,6 +150,9 @@ class CosmoModule_Theme_Class
 		return themeString;
 	};
 
+	/**
+	 * Returns the key of the current set theme.
+	 */
 	public getThemeKey = () => {
 		if (!this.themeKey)
 			this.logWarning('Trying to get theme key but no theme was set.\nDid you forget to call applyTheme?');
