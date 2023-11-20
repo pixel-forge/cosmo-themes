@@ -69,37 +69,42 @@ class CosmoModule_Theme_Class
 
 	// ################## Class Methods - Theme Application ##################
 
-	public applyTheme = (_key: string, takeFromStorage: boolean = false) => {
-		const keyFromStorage = this.webStorage.get();
-		const _theme = this.themes[_key];
-		const _storageTheme = this.themes[keyFromStorage];
-		let theme: Theme;
-		let key: string;
+	public applyTheme = (key: string) => {
+		const theme = this.themes[key];
 
-		if (!_theme) {
-			this.logErrorBold(`No theme registered for key ${_key}`);
+		if (!theme) {
+			this.logErrorBold(`No theme registered for key ${key}`);
 			return;
-		}
-
-		//Taking theme from storage
-		if (takeFromStorage) {
-			if (_storageTheme) {
-				theme = _storageTheme;
-				key = keyFromStorage;
-			} else { //Theme from storage not registered
-				this.logErrorBold(`No theme registered for key taken from storage ${keyFromStorage}`);
-				theme = _theme;
-				key = _key;
-			}
-		} else { //Not taking theme from storage
-			theme = _theme;
-			key = _key;
 		}
 
 		this.logVerbose(`Setting theme ${key}`);
 		this.styleSheet.innerHTML = this.getThemeString(key, theme);
 		this.themeKey = key;
 		this.webStorage.set(key);
+	};
+
+	public applyThemeFromStorage = (fallbackKey?: string) => {
+		const keyFromStorage = this.webStorage.get();
+		const storageTheme = this.themes[keyFromStorage];
+
+		if (!keyFromStorage)
+			this.logWarning('Could not find a theme key in storage');
+
+		if (keyFromStorage && !storageTheme)
+			this.logWarning(`Could not find a theme for key from storage ${keyFromStorage}`);
+
+		if (!storageTheme) {
+			if (!fallbackKey)
+				return;
+
+			this.logWarning(`Applying fallback theme ${fallbackKey}`);
+			return this.applyTheme(fallbackKey);
+		}
+
+		this.logVerbose(`Setting theme ${keyFromStorage}`);
+		this.styleSheet.innerHTML = this.getThemeString(keyFromStorage, storageTheme);
+		this.themeKey = keyFromStorage;
+		this.webStorage.set(keyFromStorage);
 	};
 
 	private getThemeString = (key: string, theme: Theme): string => {
