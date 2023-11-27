@@ -1,11 +1,11 @@
-import {_keys, Cosmo_LogLevel, Cosmo_WebStorage, CosmoModule} from '@pixel-forge/cosmo-utils';
+import {_keys, Cosmo_LogLevel, Cosmo_WebStorage, Cosmo_Module} from '@pixel-forge/cosmo-utils';
 
 type Theme = { [k: string]: string };
 
 export const cosmoKey_Themes_Default = 'default';
 
 class CosmoModule_Theme_Class
-	extends CosmoModule {
+	extends Cosmo_Module {
 
 	private readonly styleSheet: HTMLStyleElement;
 	private readonly themes: { [k: string]: Theme } = {};
